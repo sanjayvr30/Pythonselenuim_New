@@ -37,16 +37,18 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     loginpage = Login(driver)
     loginpage.login(topup_data["username"], topup_data["password"])
     homepage = Homepage(driver)
-    homepage.punchin_number(topup_data["msisdn"])
+    inital_balance=homepage.punchin_number(topup_data["msisdn"])
     homepage.find_topup_menus()
     offerselection = OfferSelection(driver)
-    total=offerselection.top_up_offer_selection(topup_data["plan"])
-    print(f"Total offer price + commission: {total}")
+    total_offer_price_with_comission=offerselection.top_up_offer_selection(topup_data["plan"])
+    final_balance = inital_balance - total_offer_price_with_comission
+    print(final_balance)
     submission = Submission(driver)
-    submission.submission_page("Your order is being processed.", "Unable to Process",
+    final_wallet_balace=submission.submission_page("Your order is being processed.", "Unable to Process",
                                f"Reports\\{topup_data["plan"]}_sucess.png",
                                f"Reports\\{topup_data["plan"]}_failure.png")
-
+    print(final_wallet_balace)
+    assert final_balance == final_wallet_balace
 
 @pytest.mark.regression
 @pytest.mark.parametrize("Addon_data", addon_Ons)
@@ -55,12 +57,15 @@ def test_Add_Ons_addsusbription(invoke_browser, Addon_data):
     loginpage = Login(driver)
     loginpage.login(Addon_data["username"], Addon_data["password"])
     homepage = Homepage(driver)
-    inital_balance=homepage.punchin_number(Addon_data["msisdn"])
+    inital_balance=homepage.punchin_number(Addon_data["msisdn"])  #intial wallet balance
     homepage.find_Add_ons_menus()
     offerselection = OfferSelection(driver)
-    total_offer_price_with_comission=offerselection.add_On_selection(Addon_data["plan"])
-    final_balance =inital_balance -total_offer_price_with_comission
+    total_offer_price_with_comission=offerselection.add_On_selection(Addon_data["plan"])  #offer price - commision
+    final_balance = inital_balance - total_offer_price_with_comission
+    print(final_balance)
     submission = Submission(driver)
-    submission.submission_page("Your order is being processed.", "Unable to Process",
+    final_wallet_balance=submission.submission_page("Your order is being processed.", "Unable to Process",
                                f"Reports\\{Addon_data["plan"]}_sucess.png",
-                               f"Reports\\{Addon_data["plan"]}_failure.png")
+                               f"Reports\\{Addon_data["plan"]}_failure.png") #final wallet balance
+    print(final_balance)
+    assert final_balance == final_wallet_balance

@@ -21,7 +21,7 @@ class Homepage:
     def punchin_number(self, msisdn):
         self.exp_wait.until(
             expected_conditions.presence_of_element_located(self.enter_msisdn)).send_keys(msisdn)
-        wallet_balnce =self.driver.find_element(By.CSS_SELECTOR, "wallet-balance-text").text
+        wallet_balnce = self.driver.find_element(By.CSS_SELECTOR, ".wallet-balance-text").text
         inital_balance=Decimal(wallet_balnce.replace('$', '').replace(',', '').strip())
         self.driver.find_element(*self.proceed).click()
         return inital_balance

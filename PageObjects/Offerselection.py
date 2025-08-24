@@ -34,12 +34,12 @@ class OfferSelection:
                 price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
                 commision_price = i.find_element(*self.comission_price).text
                 commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
-                total = price_decimal + commision_decimal
+                total_offer_price_with_comission = price_decimal - commision_decimal
                 i.find_element(*self.add_to_cart).click()
             else:
                 print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
-        return total
+        return total_offer_price_with_comission
 
 
     def top_up_offer_selection(self, offername):
@@ -56,12 +56,14 @@ class OfferSelection:
                 price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
                 commision_price = i.find_element(*self.comission_price).text
                 commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
-                total = price_decimal + commision_decimal
+                print(f"Commssion amount:{commision_decimal}")
+                print(f"Offer amount:{price_decimal}")
+                total_offer_price_with_comission = price_decimal - commision_decimal
                 i.find_element(*self.add_to_cart).click()
             else:
                 print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
-        return total
+        return total_offer_price_with_comission
 
     def add_On_selection(self, offername):
         exp_wait = WebDriverWait(self.driver, 10)
