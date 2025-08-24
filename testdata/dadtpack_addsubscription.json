@@ -19,6 +19,12 @@
 			"password": "Admin@123456",
 			"msisdn": "80101022",
 			"plan": "$16 All-in-1 Top-up"
+		},		{
+			"username": "bfn175",
+			"password": "Admin@123456",
+			"msisdn": "80101022",
+			"plan": "$16 All-in-1 Top-up"
 		}
+
 	]
 }
