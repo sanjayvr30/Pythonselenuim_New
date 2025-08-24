@@ -4,7 +4,8 @@
 			"username": "bfn175",
 			"password": "Admin@123456",
 			"msisdn": "80101022",
-			"plan": "100GB Data Pack"
+			"plan": "100GB Data Pack",
+			"menu": ""
 		},
 		{
 			"username": "bfn175",
@@ -19,11 +20,19 @@
 			"password": "Admin@123456",
 			"msisdn": "80101022",
 			"plan": "$16 All-in-1 Top-up"
-		},		{
+		}
+	],
+	"Addon": [
+		{
 			"username": "bfn175",
 			"password": "Admin@123456",
 			"msisdn": "80101022",
 			"plan": "$16 All-in-1 Top-up"
+		},		{
+			"username": "bfn175",
+			"password": "Admin@123456",
+			"msisdn": "80101022",
+			"plan": "$24 All-in-1"
 		}
 
 	]

@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -19,12 +20,14 @@ class Submission:
             self.submission_text)).text
         if submission_message == sucess_message:
             exp_wait.until(expected_conditions.element_to_be_clickable(self.okay_button)).click()
-            # self.driver.find_element(*self.okay_button).click()
             exp_wait.until(
                 expected_conditions.presence_of_element_located(self.payment_recived))
             self.driver.save_screenshot(sucess_screenshopt_path)
             self.driver.find_element(*self.okay_button).click()
+            wallet_balnce =self.driver.find_element(By.CSS_SELECTOR, "wallet-balance-text").text
+            final_wallet_balace=Decimal(wallet_balnce.replace("$","").replace(",","").strip())
         if submission_message == failure_message:
             self.driver.save_screenshot(failure_screenshopt_path)
             self.driver.find_element(*self.okay_button).click()
+        return final_wallet_balace
         time.sleep(5)

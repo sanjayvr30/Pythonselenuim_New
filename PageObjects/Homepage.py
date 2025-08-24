@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -16,16 +17,17 @@ class Homepage:
         self.menus = By.CSS_SELECTOR, ".retailer-menu-item"
         self.exp_wait = WebDriverWait(self.driver, 10)
 
-    def punchin_number(self, msisdn):
 
+    def punchin_number(self, msisdn):
         self.exp_wait.until(
             expected_conditions.presence_of_element_located(self.enter_msisdn)).send_keys(msisdn)
+        wallet_balnce =self.driver.find_element(By.CSS_SELECTOR, "wallet-balance-text").text
+        inital_balance=Decimal(wallet_balnce.replace('$', '').replace(',', '').strip())
         self.driver.find_element(*self.proceed).click()
+        return inital_balance
 
     def find_menus(self):
         menus = self.exp_wait.until(expected_conditions.presence_of_all_elements_located(self.menus))
-        # menus = self.driver.find_elements(*self.menus)
-        # print(menus)
         for i in menus:
             if i.text == 'Data & Roaming':
                 i.click()
@@ -33,7 +35,15 @@ class Homepage:
 
     def find_topup_menus(self):
         menus = self.exp_wait.until(expected_conditions.presence_of_all_elements_located(self.menus))
-        time.sleep(2)
+        time.sleep(3)
         for i in menus:
             if i.text == 'Top Up':
+                i.click()
+
+
+    def find_Add_ons_menus(self):
+        menus = self.exp_wait.until(expected_conditions.presence_of_all_elements_located(self.menus))
+        time.sleep(2)
+        for i in menus:
+            if i.text == 'Add-ons':
                 i.click()

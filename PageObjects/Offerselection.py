@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -12,26 +13,33 @@ class OfferSelection:
         self.find_offers = (By.XPATH, "//div[@class='block']/div/div[2]")
         self.offer_name = (By.XPATH, 'div[1]/span[1]')
         self.offer_price = (By.XPATH, 'div[1]/span[2]')
+        self.comission_price=(By.XPATH, 'div[2]/span[2]')
         self.add_to_cart = (By.XPATH, 'div[4]/button')
         self.proceed_to_pay = (By.XPATH, '//button[text()="Proceed to pay"]')
         self.data_pack_menu = (By.XPATH, "//span[text()='Data Packs - 30 Days']")
         self.top_up_menu= (By.XPATH, "//span[text()='All-in-1']")
+        self.add_on_menu=(By.XPATH, '//span[tex()="Validity Extension"]')
 
     def data_offer_selection(self, offername):
         exp_wait = WebDriverWait(self.driver, 10)
         exp_wait.until(
             expected_conditions.presence_of_element_located(
                 self.data_pack_menu)).click()
+        time.sleep(2)
         offers = self.driver.find_elements(*self.find_offers)
         for i in offers:
             offer_name = i.find_element(*self.offer_name)
-            # print(offer_name.text)
             if offer_name.text == offername:
-                offer_price = i.find_element(*self.offer_price)
-                # print(offer_price.text)
+                offer_price = i.find_element(*self.offer_price).text
+                price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
+                commision_price = i.find_element(*self.comission_price).text
+                commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
+                total = price_decimal + commision_decimal
                 i.find_element(*self.add_to_cart).click()
-
+            else:
+                print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
+        return total
 
 
     def top_up_offer_selection(self, offername):
@@ -39,14 +47,40 @@ class OfferSelection:
         exp_wait.until(
             expected_conditions.presence_of_element_located(
                 self.top_up_menu)).click()
-        time.sleep(3)
+        time.sleep(2)
         offers = self.driver.find_elements(*self.find_offers)
         for i in offers:
             offer_name = i.find_element(*self.offer_name)
             if offer_name.text == offername:
-                offer_price = i.find_element(*self.offer_price)
-                print(offer_price.text)
+                offer_price = i.find_element(*self.offer_price).text
+                price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
+                commision_price = i.find_element(*self.comission_price).text
+                commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
+                total = price_decimal + commision_decimal
                 i.find_element(*self.add_to_cart).click()
             else:
                 print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
+        return total
+
+    def add_On_selection(self, offername):
+        exp_wait = WebDriverWait(self.driver, 10)
+        exp_wait.until(
+            expected_conditions.presence_of_element_located(
+                self.add_on_menu)).click()
+        time.sleep(2)
+        offers = self.driver.find_elements(*self.find_offers)
+        for i in offers:
+            offer_name = i.find_element(*self.offer_name)
+            if offer_name.text == offername:
+                offer_price = i.find_element(*self.offer_price).text
+                price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
+                commision_price = i.find_element(*self.comission_price).text
+                commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
+                total_offer_price_with_comission=price_decimal-commision_decimal
+                i.find_element(*self.add_to_cart).click()
+            else:
+                print("Offer didn't Match")
+        self.driver.find_element(*self.proceed_to_pay).click()
+        return total_offer_price_with_comission
+
