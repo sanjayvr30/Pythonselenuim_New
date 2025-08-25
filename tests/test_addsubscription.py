@@ -6,6 +6,7 @@ from PageObjects.Homepage import Homepage
 from PageObjects.LoginPage import Login
 from PageObjects.Offerselection import OfferSelection
 from PageObjects.Submission import Submission
+from utils.Baseclass import Baseclass
 
 with open("../testdata/dadtpack_addsubscription.json") as f:
     addsub_data = json.load(f)
@@ -16,6 +17,8 @@ with open("../testdata/dadtpack_addsubscription.json") as f:
 
 @pytest.mark.parametrize("list_of_data", datpack_data)
 def test_data_packs_addsusbription(invoke_browser, list_of_data):
+    baseclass=Baseclass()
+    log=baseclass.logging()
     driver = invoke_browser
     loginpage = Login(driver)
     loginpage.login(list_of_data["username"], list_of_data["password"])
@@ -26,13 +29,15 @@ def test_data_packs_addsusbription(invoke_browser, list_of_data):
     offerselection.data_offer_selection(list_of_data["plan"])
     submission = Submission(driver)
     submission.submission_page("Your order is being processed.", "Unable to Process",
-                               f"Reports\\{list_of_data["plan"]}_sucess.png",
-                               f"Reports\\{list_of_data["plan"]}_failure.png")
+                               f"../Reports\\{list_of_data["plan"]}_sucess.png",
+                               f"../Reports\\{list_of_data["plan"]}_failure.png")
 
 
 @pytest.mark.smoke
 @pytest.mark.parametrize("topup_data", topup_data)
 def test_topup_packs_addsusbription(invoke_browser, topup_data):
+    baseclass=Baseclass()
+    log=baseclass.logging()
     driver = invoke_browser
     loginpage = Login(driver)
     loginpage.login(topup_data["username"], topup_data["password"])
@@ -42,12 +47,12 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     offerselection = OfferSelection(driver)
     total_offer_price_with_comission=offerselection.top_up_offer_selection(topup_data["plan"])
     final_balance = inital_balance - total_offer_price_with_comission
-    print(final_balance)
+    log.info(f"final_balance:{final_balance}")
     submission = Submission(driver)
     final_wallet_balace=submission.submission_page("Your order is being processed.", "Unable to Process",
                                f"Reports\\{topup_data["plan"]}_sucess.png",
                                f"Reports\\{topup_data["plan"]}_failure.png")
-    print(final_wallet_balace)
+    log.info(f"final_wallet_balace:{final_wallet_balace}")
     assert final_balance == final_wallet_balace
 
 @pytest.mark.regression

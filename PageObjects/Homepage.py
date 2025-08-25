@@ -1,11 +1,10 @@
+import json
 import time
 from decimal import Decimal
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
-from PageObjects.Offerselection import OfferSelection
 
 
 class Homepage:
