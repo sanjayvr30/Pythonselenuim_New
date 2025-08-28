@@ -16,6 +16,7 @@ class Login:
         self.forgot_password_button=(By.XPATH, '//p[text()="Forgot Password"]')
         self.f_p_ursename=(By.CSS_SELECTOR, 'input[name="uname"]')
         self.f_p_number=(By.CSS_SELECTOR, 'input[name="uMobileNumber"]')
+        self.submit_button=(By.XPATH, '//button[text()="Submit"]')
 
     # def login(self, **kwargs):
     #     self.driver.find_element(*self.username).send_keys(kwargs.get("username"))
@@ -36,7 +37,11 @@ class Login:
         self.driver.find_element(*self.forgot_password_button).click()
         self.exp_wait.until(expected_conditions.presence_of_element_located(self.f_p_ursename)).send_keys(username)
         self.driver.find_element(*self.f_p_number).send_keys(msisdn)
-
+        self.driver.find_element(*self.submit_button).click()
+        sucess_text=self.exp_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//h3[text()="New Password Sent"]'))).text
+        self.driver.save_screenshot("../Reports/resset_password.png")
+        self.driver.find_element(By.XPATH, '//button[text()="Back to Log in"]').click()
+        return sucess_text
 
 
 

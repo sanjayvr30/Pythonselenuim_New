@@ -55,7 +55,6 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     log.info(f"final_wallet_balace:{final_wallet_balace}")
     assert final_balance == final_wallet_balace
 
-@pytest.mark.regression
 @pytest.mark.parametrize("Addon_data", addon_Ons)
 def test_Add_Ons_addsusbription(invoke_browser, Addon_data):
     driver = invoke_browser
