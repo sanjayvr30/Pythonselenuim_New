@@ -13,7 +13,8 @@ class Homepage:
         self.driver = driver
         self.enter_msisdn = (By.XPATH, '//input[@name="customerMobNumber"]')
         self.proceed = (By.XPATH, '//button[text()="Proceed"]')
-        self.menus = By.CSS_SELECTOR, ".retailer-menu-item"
+        self.menus = (By.CSS_SELECTOR, ".retailer-menu-item")
+        self.past_transaction_search=(By.XPATH,'//input[@name="searchData"]')
         self.exp_wait = WebDriverWait(self.driver, 10)
 
 
@@ -46,3 +47,15 @@ class Homepage:
         for i in menus:
             if i.text == 'Add-ons':
                 i.click()
+
+    def past_transaction(self,msisdn):
+        self.driver.find_element(By.XPATH, "//span[text()='Past Transactions']").click()
+        self.exp_wait.until(expected_conditions.presence_of_element_located(self.past_transaction_search)).send_keys(msisdn)
+        self.driver.find_element(By.CSS_SELECTOR, ".absolute.right-2.top-4").click()
+        purchased_offers=self.exp_wait.until(expected_conditions.visibility_of_all_elements_located((By.XPATH, '//div[@class="retailer-transaction-table mt-10"]')))
+        self.driver.save_screenshot("../Reports/past_transaction.png")
+        for i in purchased_offers:
+            offer_purchased_time=i.find_element(By.XPATH, 'div/div[3]/div').text
+            break
+        return offer_purchased_time
+
