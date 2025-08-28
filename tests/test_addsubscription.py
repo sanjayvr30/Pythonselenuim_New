@@ -17,20 +17,30 @@ with open("../testdata/dadtpack_addsubscription.json") as f:
 
 @pytest.mark.parametrize("list_of_data", datpack_data)
 def test_data_packs_addsusbription(invoke_browser, list_of_data):
-    baseclass=Baseclass()
-    log=baseclass.logging()
+    baseclass = Baseclass()
+    log = baseclass.logging()
     driver = invoke_browser
     loginpage = Login(driver)
     loginpage.login(list_of_data["username"], list_of_data["password"])
     homepage = Homepage(driver)
-    homepage.punchin_number(list_of_data["msisdn"])
-    homepage.find_menus()
+    inital_balance = homepage.punchin_number(list_of_data["msisdn"])
+    homepage.find_topup_menus()
     offerselection = OfferSelection(driver)
-    offerselection.data_offer_selection(list_of_data["plan"])
+    total_offer_price_with_comission, price_decimal = offerselection.top_up_offer_selection(list_of_data["plan"])
+    final_balance = inital_balance - total_offer_price_with_comission
+    log.info(f"final_balance:{final_balance}")
     submission = Submission(driver)
-    submission.submission_page("Your order is being processed.", "Unable to Process",
-                               f"../Reports\\{list_of_data["plan"]}_sucess.png",
-                               f"../Reports\\{list_of_data["plan"]}_failure.png")
+    final_wallet_balace, submission_time = submission.submission_page("Your order is being processed.",
+                                                                      "Unable to Process",
+                                                                      f"Reports\\{list_of_data["plan"]}_sucess.png",
+                                                                      f"Reports\\{list_of_data["plan"]}_failure.png")
+    log.info(f"submission_time:{submission_time}")
+    log.info(f"final_wallet_balace:{final_wallet_balace}")
+    assert final_balance == final_wallet_balace
+    offer_purchased_time, price_in_pasttransaction = homepage.past_transaction(list_of_data["msisdn"])
+    assert price_decimal == price_in_pasttransaction, "Offer price not matching in past transaction"
+    log.info(f"offer_purchased_time: {offer_purchased_time}")
+    assert submission_time == offer_purchased_time
 
 
 @pytest.mark.smoke
@@ -63,19 +73,27 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
 
 @pytest.mark.parametrize("Addon_data", addon_Ons)
 def test_Add_Ons_addsusbription(invoke_browser, Addon_data):
+    baseclass = Baseclass()
+    log = baseclass.logging()
     driver = invoke_browser
     loginpage = Login(driver)
     loginpage.login(Addon_data["username"], Addon_data["password"])
     homepage = Homepage(driver)
-    inital_balance=homepage.punchin_number(Addon_data["msisdn"])  #intial wallet balance
-    homepage.find_Add_ons_menus()
+    inital_balance = homepage.punchin_number(Addon_data["msisdn"])
+    homepage.find_topup_menus()
     offerselection = OfferSelection(driver)
-    total_offer_price_with_comission=offerselection.add_On_selection(Addon_data["plan"])  #offer price - commision
+    total_offer_price_with_comission, price_decimal = offerselection.top_up_offer_selection(Addon_data["plan"])
     final_balance = inital_balance - total_offer_price_with_comission
-    print(final_balance)
+    log.info(f"final_balance:{final_balance}")
     submission = Submission(driver)
-    final_wallet_balance=submission.submission_page("Your order is being processed.", "Unable to Process",
-                               f"Reports\\{Addon_data["plan"]}_sucess.png",
-                               f"Reports\\{Addon_data["plan"]}_failure.png") #final wallet balance
-    print(final_balance)
-    assert final_balance == final_wallet_balance
+    final_wallet_balace, submission_time = submission.submission_page("Your order is being processed.",
+                                                                      "Unable to Process",
+                                                                      f"Reports\\{Addon_data["plan"]}_sucess.png",
+                                                                      f"Reports\\{Addon_data["plan"]}_failure.png")
+    log.info(f"submission_time:{submission_time}")
+    log.info(f"final_wallet_balace:{final_wallet_balace}")
+    assert final_balance == final_wallet_balace
+    offer_purchased_time, price_in_pasttransaction = homepage.past_transaction(Addon_data["msisdn"])
+    assert price_decimal == price_in_pasttransaction, "Offer price not matching in past transaction"
+    log.info(f"offer_purchased_time: {offer_purchased_time}")
+    assert submission_time == offer_purchased_time
