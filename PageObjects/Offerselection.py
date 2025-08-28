@@ -63,7 +63,7 @@ class OfferSelection:
             else:
                 print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
-        return total_offer_price_with_comission
+        return total_offer_price_with_comission, price_decimal
 
     def add_On_selection(self, offername):
         exp_wait = WebDriverWait(self.driver, 10)

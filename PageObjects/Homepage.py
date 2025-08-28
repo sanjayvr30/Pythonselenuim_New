@@ -55,7 +55,8 @@ class Homepage:
         purchased_offers=self.exp_wait.until(expected_conditions.visibility_of_all_elements_located((By.XPATH, '//div[@class="retailer-transaction-table mt-10"]')))
         self.driver.save_screenshot("../Reports/past_transaction.png")
         for i in purchased_offers:
+            price_in_pasttransaction= i.find_element(By.XPATH, "div/div[1]/div[2]").text
             offer_purchased_time=i.find_element(By.XPATH, 'div/div[3]/div').text
             break
-        return offer_purchased_time
+        return offer_purchased_time,price_in_pasttransaction
 

@@ -45,7 +45,7 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     inital_balance=homepage.punchin_number(topup_data["msisdn"])
     homepage.find_topup_menus()
     offerselection = OfferSelection(driver)
-    total_offer_price_with_comission=offerselection.top_up_offer_selection(topup_data["plan"])
+    total_offer_price_with_comission, price_decimal =offerselection.top_up_offer_selection(topup_data["plan"])
     final_balance = inital_balance - total_offer_price_with_comission
     log.info(f"final_balance:{final_balance}")
     submission = Submission(driver)
@@ -55,7 +55,8 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     log.info(f"submission_time:{submission_time}")
     log.info(f"final_wallet_balace:{final_wallet_balace}")
     assert final_balance == final_wallet_balace
-    offer_purchased_time=homepage.past_transaction(topup_data["msisdn"])
+    offer_purchased_time,price_in_pasttransaction=homepage.past_transaction(topup_data["msisdn"])
+    assert price_decimal==price_in_pasttransaction ,"Offer price not matching in past transaction"
     log.info(f"offer_purchased_time: {offer_purchased_time}")
     assert submission_time == offer_purchased_time
 
