@@ -49,11 +49,16 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     final_balance = inital_balance - total_offer_price_with_comission
     log.info(f"final_balance:{final_balance}")
     submission = Submission(driver)
-    final_wallet_balace=submission.submission_page("Your order is being processed.", "Unable to Process",
+    final_wallet_balace, submission_time=submission.submission_page("Your order is being processed.", "Unable to Process",
                                f"Reports\\{topup_data["plan"]}_sucess.png",
                                f"Reports\\{topup_data["plan"]}_failure.png")
+    log.info(f"submission_time:{submission_time}")
     log.info(f"final_wallet_balace:{final_wallet_balace}")
     assert final_balance == final_wallet_balace
+    offer_purchased_time=homepage.past_transaction(topup_data["msisdn"])
+    log.info(f"offer_purchased_time: {offer_purchased_time}")
+    assert submission_time == offer_purchased_time
+
 
 @pytest.mark.parametrize("Addon_data", addon_Ons)
 def test_Add_Ons_addsusbription(invoke_browser, Addon_data):
