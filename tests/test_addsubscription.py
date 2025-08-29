@@ -13,6 +13,7 @@ with open("../testdata/dadtpack_addsubscription.json") as f:
     datpack_data = addsub_data["data"]
     topup_data=addsub_data["topup"]
     addon_Ons=addsub_data["Addon"]
+    first_topup= addsub_data["firsttopup"]
 
 
 @pytest.mark.parametrize("list_of_data", datpack_data)
@@ -97,3 +98,31 @@ def test_Add_Ons_addsusbription(invoke_browser, Addon_data):
     assert price_decimal == price_in_pasttransaction, "Offer price not matching in past transaction"
     log.info(f"offer_purchased_time: {offer_purchased_time}")
     assert submission_time == offer_purchased_time
+
+@pytest.mark.parametrize("first_topup_data", first_topup)
+@pytest.mark.blackbox
+def test_frist_top_up(invoke_browser,first_topup_data):
+    driver= invoke_browser
+    log=Baseclass()
+    loginpage=Login(driver)
+    loginpage.login(first_topup_data["username"], first_topup_data["password"])
+    homepage=Homepage(driver)
+    inital_balance=homepage.punchin_preactive_number("05063728")
+    offerselection=OfferSelection(driver)
+    total_offer_price_with_comission, price_decimal=offerselection.first_topup_offer(first_topup_data["plan"])
+    submission = Submission(driver)
+    final_wallet_balace, submission_time = submission.submission_page("Your order is being processed.",
+                                                                      "Unable to Process",
+                                                                      f"Reports\\{first_topup_data["plan"]}_sucess.png",
+                                                                      f"Reports\\{first_topup_data["plan"]}_failure.png")
+    log.info(f"submission_time:{submission_time}")
+    log.info(f"final_wallet_balace:{final_wallet_balace}")
+    final_balance = inital_balance - total_offer_price_with_comission
+    assert final_balance == final_wallet_balace
+    offer_purchased_time, price_in_pasttransaction = homepage.past_transaction(first_topup_data["msisdn"])
+    assert price_decimal == price_in_pasttransaction, "Offer price not matching in past transaction"
+    log.info(f"offer_purchased_time: {offer_purchased_time}")
+    assert submission_time == offer_purchased_time
+
+
+

@@ -15,6 +15,8 @@ class Homepage:
         self.proceed = (By.XPATH, '//button[text()="Proceed"]')
         self.menus = (By.CSS_SELECTOR, ".retailer-menu-item")
         self.past_transaction_search=(By.XPATH,'//input[@name="searchData"]')
+        self.first_topup=(By.CSS_SELECTOR, ".text-center.retailer-balance-modal-header ")
+        self.okay_button =(By.XPATH, "//button[text()='Okay']")
         self.exp_wait = WebDriverWait(self.driver, 10)
 
 
@@ -24,6 +26,17 @@ class Homepage:
         wallet_balnce = self.driver.find_element(By.CSS_SELECTOR, ".wallet-balance-text").text
         inital_balance=Decimal(wallet_balnce.replace('$', '').replace(',', '').strip())
         self.driver.find_element(*self.proceed).click()
+        return inital_balance
+
+    def punchin_preactive_number(self, msisdn):
+        self.exp_wait.until(
+            expected_conditions.presence_of_element_located(self.enter_msisdn)).send_keys(msisdn)
+        wallet_balnce = self.driver.find_element(By.CSS_SELECTOR, ".wallet-balance-text").text
+        inital_balance=Decimal(wallet_balnce.replace('$', '').replace(',', '').strip())
+        self.driver.find_element(*self.proceed).click()
+        first_topup_text=self.exp_wait.until(expected_conditions.presence_of_element_located(self.first_topup)).text
+        assert "First top up required" in first_topup_text, "Failed to load first_topup"
+        self.driver.find_element(*self.okay_button).click()
         return inital_balance
 
     def find_menus(self):
@@ -55,7 +68,8 @@ class Homepage:
         purchased_offers=self.exp_wait.until(expected_conditions.visibility_of_all_elements_located((By.XPATH, '//div[@class="retailer-transaction-table mt-10"]')))
         self.driver.save_screenshot("../Reports/past_transaction.png")
         for i in purchased_offers:
-            price_in_pasttransaction= i.find_element(By.XPATH, "div/div[1]/div[2]").text
+            price_pasttransaction= i.find_element(By.XPATH, "div/div[1]/div[2]").text
+            price_in_pasttransaction = Decimal(price_pasttransaction.replace('$', '').replace(',', '').strip())
             offer_purchased_time=i.find_element(By.XPATH, 'div/div[3]/div').text
             break
         return offer_purchased_time,price_in_pasttransaction
