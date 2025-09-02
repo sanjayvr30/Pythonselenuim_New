@@ -107,7 +107,7 @@ def test_frist_top_up(invoke_browser,first_topup_data):
     loginpage=Login(driver)
     loginpage.login(first_topup_data["username"], first_topup_data["password"])
     homepage=Homepage(driver)
-    inital_balance=homepage.punchin_preactive_number("05063728")
+    inital_balance=homepage.punchin_preactive_number(first_topup_data["msisdn"])
     offerselection=OfferSelection(driver)
     total_offer_price_with_comission, price_decimal=offerselection.first_topup_offer(first_topup_data["plan"])
     submission = Submission(driver)
