@@ -1,6 +1,7 @@
 import time
 from decimal import Decimal
 
+from selenium.common import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -46,7 +47,7 @@ class OfferSelection:
             else:
                 print("Offer didn't Match")
         self.driver.find_element(*self.proceed_to_pay).click()
-        return total_offer_price_with_comission
+        return total_offer_price_with_comission, price_decimal
 
     def top_up_offer_selection(self, offername):
         self.exp_wait.until(
@@ -98,15 +99,22 @@ class OfferSelection:
             print(offer_name)
             if offer_name == offername:
                 i.find_element(*self.first_topup_buynow).click()
+
                 offer_price = i.find_element(*self.first_topup_offerprice).text
+                print(offer_price)
                 price_decimal = Decimal(offer_price.replace('$', '').replace(',', '').strip())
                 commision_price = i.find_element(*self.first_topup_comissionprice).text
                 commision_decimal = Decimal(commision_price.replace('$', '').replace(',', '').strip())
                 total_offer_price_with_comission = price_decimal - commision_decimal
                 i.find_element(*self.add_to_cart).click()
-                actions.move_to_element(self.driver.find_element(By.XPATH, "//sapn[text()='Clear All']")).perform()
-                self.driver.execute_script("window.scroll(0,1500);")
-                self.driver.find_element(By.XPATH, "//path[@fill-rule='evenodd']").click()
-                time.sleep(3)
-                self.exp_wait.until(expected_conditions.element_to_be_clickable(self.proceed_to_pay)).click()
-        return total_offer_price_with_comission, price_decimal
+                try:
+                    self.exp_wait.until(expected_conditions.invisibility_of_element_located(
+                        (By.CLASS_NAME, ".retailer-balance-modal-header")
+                    ))
+                except TimeoutException:
+                    print("Warning: Modal did not disappear in time")
+                proceed_to_pay_el = self.exp_wait.until(
+                    expected_conditions.element_to_be_clickable(self.proceed_to_pay))
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", proceed_to_pay_el)
+                self.driver.execute_script("arguments[0].click();", proceed_to_pay_el)
+                return total_offer_price_with_comission, price_decimal

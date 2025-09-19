@@ -39,7 +39,7 @@ class Homepage:
         self.driver.find_element(*self.okay_button).click()
         return inital_balance
 
-    def find_menus(self):
+    def find_datapack_menus(self):
         menus = self.exp_wait.until(expected_conditions.presence_of_all_elements_located(self.menus))
         for i in menus:
             if i.text == 'Data & Roaming':

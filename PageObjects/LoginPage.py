@@ -26,9 +26,9 @@ class Login:
     #     otppage = Otppage(self.driver)
     #     return otppage.enter_opt("0")
 
-    def login(self,username,password):
-        self.driver.find_element(*self.username).send_keys(username)
-        self.driver.find_element(*self.password).send_keys(password)
+    def login(self,*args):
+        self.driver.find_element(*self.username).send_keys(args[0])
+        self.driver.find_element(*self.password).send_keys(args[1])
         self.driver.find_element(*self.click_login_button).click()
         otppage=Otppage(self.driver)
         return otppage.enter_opt("0")

@@ -15,7 +15,7 @@ with open("../testdata/dadtpack_addsubscription.json") as f:
     addon_Ons=addsub_data["Addon"]
     first_topup= addsub_data["firsttopup"]
 
-
+@pytest.mark.regression
 @pytest.mark.parametrize("list_of_data", datpack_data)
 def test_data_packs_addsusbription(invoke_browser, list_of_data):
     baseclass = Baseclass()
@@ -25,11 +25,12 @@ def test_data_packs_addsusbription(invoke_browser, list_of_data):
     loginpage.login(list_of_data["username"], list_of_data["password"])
     homepage = Homepage(driver)
     inital_balance = homepage.punchin_number(list_of_data["msisdn"])
-    homepage.find_topup_menus()
+    log.info(f"initial wallet balance: {inital_balance}")
+    homepage.find_datapack_menus()
     offerselection = OfferSelection(driver)
-    total_offer_price_with_comission, price_decimal = offerselection.top_up_offer_selection(list_of_data["plan"])
+    total_offer_price_with_comission, price_decimal = offerselection.data_offer_selection(list_of_data["plan"])
     final_balance = inital_balance - total_offer_price_with_comission
-    log.info(f"final_balance:{final_balance}")
+    log.info(f"final  wallet balance:{final_balance}")
     submission = Submission(driver)
     final_wallet_balace, submission_time = submission.submission_page("Your order is being processed.",
                                                                       "Unable to Process",
@@ -45,6 +46,7 @@ def test_data_packs_addsusbription(invoke_browser, list_of_data):
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 @pytest.mark.parametrize("topup_data", topup_data)
 def test_topup_packs_addsusbription(invoke_browser, topup_data):
     baseclass=Baseclass()
@@ -54,6 +56,7 @@ def test_topup_packs_addsusbription(invoke_browser, topup_data):
     loginpage.login(topup_data["username"], topup_data["password"])
     homepage = Homepage(driver)
     inital_balance=homepage.punchin_number(topup_data["msisdn"])
+    log.info(f"inital walled balance: {inital_balance}")
     homepage.find_topup_menus()
     offerselection = OfferSelection(driver)
     total_offer_price_with_comission, price_decimal =offerselection.top_up_offer_selection(topup_data["plan"])
