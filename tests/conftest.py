@@ -20,17 +20,17 @@ def invoke_browser(request):
     if browser_name =="chrome":
         driver = webdriver.Chrome()
         driver.maximize_window()
-        driver.get("https://domo-eload-uat.m1.com.sg/login")
+        driver.get("https:///login")
         time.sleep(3)
     elif browser_name =="firefox":
         driver = webdriver.Firefox()
         driver.maximize_window()
-        driver.get("https://domo-eload-uat.m1.com.sg/login")
+        driver.get("https:///login")
         time.sleep(3)
     elif browser_name =="Edge":
         driver = webdriver.Ie()
         driver.maximize_window()
-        driver.get("https://domo-eload-uat.m1.com.sg/login")
+        driver.get("https://login")
         time.sleep(3)
     yield driver
     driver.close()
@@ -64,4 +64,5 @@ def invoke_browser(request):
 #
 #
 # def _capture_screenshot(file_name):
+
 #     driver.get_screenshot_as_file(file_name)
